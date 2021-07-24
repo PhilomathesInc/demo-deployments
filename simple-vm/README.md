@@ -4,8 +4,7 @@
 
 - [x] To create the target infrastructure using Terraform
 - [x] The configuration of the server and application will be done via Ansible
-- [ ] To deploy web applications to a Linux VM via GitHub Actions
-- [ ] To setup DNS for the target using Terraform
+- [x] To setup DNS for the target using Terraform
 
 ## Details :memo:
 
