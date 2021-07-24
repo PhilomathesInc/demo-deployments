@@ -1,0 +1,6 @@
+---
+- name: start Go App
+  ansible.builtin.systemd:
+    daemon_reload: yes
+    name: go-webapp
+    state: started

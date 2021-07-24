@@ -1,0 +1,28 @@
+- name: Install Nginx web server
+  ansible.builtin.apt:
+    name: "nginx"
+    state: present
+    update_cache: yes
+
+- name: delete default nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart Nginx
+
+- name: copy nginx site config
+  template:
+    src: virtual_host.j2
+    dest: /etc/nginx/sites-available/{{ domain }}
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create a symbolic link
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/{{ domain }}
+    dest: /etc/nginx/sites-enabled/{{ domain }}
+    owner: root
+    group: root
+    state: link
+  notify: restart Nginx

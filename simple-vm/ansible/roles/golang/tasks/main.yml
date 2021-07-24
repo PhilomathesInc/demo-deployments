@@ -1,0 +1,70 @@
+- name: download Go language SDK
+  get_url:
+    url: 'https://storage.googleapis.com/golang/go1.16.6.linux-amd64.tar.gz'
+    dest: '/tmp/go1.16.6.linux-amd64.tar.gz'
+    checksum: 'sha256:be333ef18b3016e9d7cb7b1ff1fdb0cac800ca0be4cf2290fe613b3d069dfe0d'
+    force: no
+    use_proxy: yes
+    validate_certs: yes
+    mode: 'u=rw,go=r'
+
+- name: create Go language SDK installation directory
+  file:
+    state: directory
+    owner: root
+    group: root
+    mode: 'u=rwx,go=rx'
+    dest: '/opt/go/1.16.6'
+
+- name: install Go language SDK
+  unarchive:
+    src: '/tmp/go1.16.6.linux-amd64.tar.gz'
+    remote_src: yes
+    extra_opts: '--strip-components=1'
+    dest: '/opt/go/1.16.6'
+    owner: root
+    group: root
+    creates: '/opt/go/1.16.6/bin'
+
+# Set Go language SDK environment variables
+- name: make sure /etc/profile.d exists
+  file:
+    path: /etc/profile.d
+    state: directory
+    owner: root
+    group: root
+    mode: 'u=rwx,go=rx'
+
+- name: export Go language SDK environment variables
+  template:
+    src: golang.sh.j2
+    dest: /etc/profile.d/golang.sh
+    owner: root
+    group: root
+    mode: 'u=rw,go=r'
+
+- name: make sure /var/www/golang exists
+  file:
+    path: /var/www/golang
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 'u=rwx,go=rx'
+
+# Setup the web application
+- name: copy the application binary
+  get_url:
+    url: https://github.com/PhilomathesInc/demo-applications/releases/latest/download/go-webapp_linux_amd64
+    dest: /var/www/golang/app
+    mode: '0755'
+    owner: www-data
+    group: www-data
+
+- name: copy the systemd service file
+  ansible.builtin.copy:
+    src: go-webapp.service
+    dest: /lib/systemd/system/go-webapp.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: start Go App
