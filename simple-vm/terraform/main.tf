@@ -28,9 +28,6 @@ provider "google" {
   zone    = var.zone
 }
 
-provider "cloudflare" {
-}
-
 resource "google_compute_instance" "default" {
   name         = "demo"
   machine_type = "e2-medium"
