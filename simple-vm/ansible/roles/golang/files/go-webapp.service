@@ -1,0 +1,11 @@
+[Unit]
+Description=go-webapp
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5s
+ExecStart=/var/www/golang/app
+
+[Install]
+WantedBy=multi-user.target
